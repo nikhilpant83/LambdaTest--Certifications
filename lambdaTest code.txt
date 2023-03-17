@@ -1,0 +1,87 @@
+
+
+
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.*;
+import org.openqa.selenium.support.ui.*;
+import org.testng.annotations.*;
+
+import org.testng.asserts.SoftAssert;
+
+public class TestSuite {
+    WebDriver driver;
+
+    @BeforeTest
+    @Parameters({"browserName", "url"})
+    public void setUp(String browserName, String url) {
+        if (browserName.equalsIgnoreCase("chrome")) {
+            System.setProperty("webdriver.chrome.driver", "path/to/chromedriver.exe");
+            driver = new ChromeDriver();
+        }
+        driver.get(url);
+    }
+
+    @AfterTest
+    public void tearDown() {
+        driver.quit();
+    }
+
+    @Test(priority = 1)
+    public void testScenario1() {
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//*")));
+
+        SoftAssert softAssert = new SoftAssert();
+        String actualTitle = driver.getTitle();
+        String expectedTitle = "LambdaTest";
+        softAssert.assertEquals(actualTitle, expectedTitle, "Title mismatch");
+        softAssert.assertAll();
+    }
+
+    @Test(priority = 2)
+    public void testScenario2() {
+        WebElement inputForms = driver.findElement(By.linkText("Input Forms"));
+        inputForms.click();
+
+        WebElement checkboxDemo = driver.findElement(By.linkText("Checkbox Demo"));
+        checkboxDemo.click();
+
+        WebElement singleCheckbox = driver.findElement(By.xpath("//input[@type='checkbox']"));
+        boolean isSelected = singleCheckbox.isSelected();
+        Assert.assertFalse(isSelected, "Checkbox is already selected");
+
+        singleCheckbox.click();
+        isSelected = singleCheckbox.isSelected();
+        Assert.assertTrue(isSelected, "Checkbox is not selected");
+    }
+
+    @Test(priority = 3)
+    public void testScenario3() {
+        driver.navigate().refresh();
+        WebElement alertsModals = driver.findElement(By.linkText("Alerts & Modals"));
+        alertsModals.click();
+
+        WebElement javascriptAlerts = driver.findElement(By.linkText("Javascript Alerts"));
+        javascriptAlerts.click();
+
+        WebElement jsAlertBox = driver.findElement(By.xpath("//button[@onclick='myAlertFunction()']"));
+        jsAlertBox.click();
+
+        Alert alert = driver.switchTo().alert();
+        String alertMessage = alert.getText();
+        String expectedAlertMessage = "I am an alert box!";
+        Assert.assertEquals(alertMessage, expectedAlertMessage, "Alert message mismatch");
+
+        alert.accept();
+    }
+}
+
+
+
+
+
+__________________________________________________________________________________________________________________________________
+
+
+
